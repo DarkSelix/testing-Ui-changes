@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>VellyAI - Advanced Chat</title>
+<link rel="stylesheet" href="style.css">
+<script src=https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div id="sidebar" class="sidebar glass-effect">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Menu</h2>
+            <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab active" data-tab="history">History</button>
+            <button class="sidebar-tab" data-tab="settings">Settings</button>
+            <button class="sidebar-tab" data-tab="appearance">Appearance</button>
+        </div>
+        <div class="sidebar-content" id="history-tab">
+            <button id="new-chat-button" class="new-chat-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
+                New Chat
+            </button>
+            <ul class="history-list" id="history-list"></ul>
+        </div>
+        <div class="sidebar-content" id="settings-tab" style="display:none">
+            <div class="settings-section">
+                <label for="api-key-input" class="settings-label">Chutes.AI API Key</label>
+                <input type="password" id="api-key-input" class="settings-input" placeholder="Enter your Chutes.AI API Key">
+                <small>Your API key is stored locally in your browser.</small>
+            </div>
+            <div class="settings-section">
+                <label for="model-select" class="settings-label">AI Model</label>
+                <select id="model-select" class="settings-select">
+                    <option value="deepseek-ai/DeepSeek-V3-0324" selected>DeepSeek V3 0324</option>
+                    <!-- Add other models as needed -->
+                </select>
+            </div>
+            <div class="settings-section">
+                <label for="ai-persona-input" class="settings-label">AI Persona (Bot's Full System Prompt)</label>
+                <textarea id="ai-persona-input" class="settings-textarea" placeholder="Enter the complete system prompt for the AI..."></textarea>
+                <small>This replaces the default system message entirely if filled.</small>
+            </div>
+            <div class="settings-section">
+                <label for="user-persona-input" class="settings-label">Your Persona (How AI sees you)</label>
+                <textarea id="user-persona-input" class="settings-textarea" placeholder="Describe yourself, your character, your role..."></textarea>
+                <small>This text will be prepended to your messages to inform the AI.</small>
+            </div>
+            <button id="save-settings" class="settings-button">Save Core Settings</button>
+             <div class="settings-section" style="margin-top: 1.5rem;">
+                <h3 style="color: var(--secondary-color); margin-bottom: 0.5rem;">Legal Disclaimer</h3>
+                <p>
+                    This chatbot runs entirely in your browser. No data is stored or sent to any server owned by this site.<br>
+                    The site owner is not responsible for the content generated or how the chatbot is used.<br>
+                    Use at your own risk.
+                </p>      
+            </div>
+        </div>
+        <div class="sidebar-content" id="appearance-tab" style="display:none">
+            <div class="settings-section">
+                <h4 class="settings-subtitle">Interface Visuals</h4>
+                <label for="bg-image-url-input" class="settings-label">Background Image URL</label>
+                <input type="url" id="bg-image-url-input" class="settings-input" placeholder="Enter URL for background image">
+                <small>Applies a background image to the chat interface.</small>
+            </div>
+            <div class="settings-section">
+                <label for="bot-avatar-url-input" class="settings-label">Bot Avatar Image URL</label>
+                <input type="url" id="bot-avatar-url-input" class="settings-input" placeholder="Enter URL for bot's avatar">
+                <small>Replaces the default bot icon.</small>
+            </div>
+            <div class="settings-section">
+                <label for="user-avatar-url-input" class="settings-label">Your Avatar Image URL</label>
+                <input type="url" id="user-avatar-url-input" class="settings-input" placeholder="Enter URL for your avatar">
+                <small>Replaces the default user icon.</small>
+            </div>
+            <hr class="settings-divider">
+            <div class="settings-section">
+                <h4 class="settings-subtitle">AI Model Parameters</h4>
+                <label for="temperature-slider" class="settings-label">Temperature (Creativity): <span id="temperature-value">0.75</span></label>
+                <input type="range" id="temperature-slider" class="settings-input settings-slider" min="0" max="2" step="0.01" value="0.75">
+                <small>Controls randomness. Lower is more focused, higher is more creative.</small>
+            </div>
+            <div class="settings-section">
+                <label for="top-p-slider" class="settings-label">Top P: <span id="top-p-value">0.90</span></label>
+                <input type="range" id="top-p-slider" class="settings-input settings-slider" min="0.01" max="1" step="0.01" value="0.9">
+                <small>Controls nucleus sampling. Lower is more deterministic.</small>
+            </div>
+            <div class="settings-section">
+                <label for="repetition-penalty-slider" class="settings-label">Repetition Penalty: <span id="repetition-penalty-value">1.10</span></label>
+                <input type="range" id="repetition-penalty-slider" class="settings-input settings-slider" min="0.5" max="2" step="0.01" value="1.1">
+                <small>Values > 1 decrease repetition, < 1 increase it.</small>
+            </div>
+             <hr class="settings-divider">
+            <div class="settings-section">
+                <h4 class="settings-subtitle">Chat Bubble Colors</h4>
+                <label for="user-bubble-bg-color" class="settings-label">Your Bubble Background</label>
+                <input type="color" id="user-bubble-bg-color" class="settings-input settings-color-input" value="#8b5cf6">
+                <label for="user-bubble-text-color" class="settings-label">Your Bubble Text</label>
+                <input type="color" id="user-bubble-text-color" class="settings-input settings-color-input" value="#FFFFFF">
+
+                <label for="bot-bubble-bg-color" class="settings-label">Bot Bubble Background</label>
+                <input type="color" id="bot-bubble-bg-color" class="settings-input settings-color-input" value="#1F2937">
+                <label for="bot-bubble-text-color" class="settings-label">Bot Bubble Text</label>
+                <input type="color" id="bot-bubble-text-color" class="settings-input settings-color-input" value="#F9FAFB">
+            </div>
+            <button id="save-appearance-settings" class="settings-button">Save Appearance & AI Params</button>
+        </div>
+    </div>
+
+    <div class="chat-container glass-effect">
+        <div class="chat-header">
+            <div class="header-content">
+                <button id="menu-button" class="header-button" aria-label="Open menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div id="header-ai-icon" class="header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-bot">
+                        <path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <h1 id="chat-header-title" class="header-title">VellyAI</h1>
+            </div>
+            <div class="header-actions">
+                 <button id="customize-button" class="header-button" aria-label="Customize Appearance" title="Customize Appearance">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette">
+                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.786-.141 2.598-.398"/><path d="M16.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M19.5 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M19.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M16.5 15a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M22 12c0 5.5-4.5 10-10 10"/>
+                    </svg>
+                </button>
+                <button id="view-context-button" class="header-button" aria-label="View Context/Memory" title="View Context/Memory">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain-cog">
+                        <path d="M12 2a4.5 4.5 0 0 0-4.5 4.5v.43a1.5 1.5 0 0 1-1.17 1.41A6.5 6.5 0 0 0 9.5 16v2.5a2.5 2.5 0 0 0 5 0V16a6.5 6.5 0 0 0 3.17-2.66 1.5 1.5 0 0 1-1.17-1.41V6.5A4.5 4.5 0 0 0 12 2Z"/><path d="M20.55 16.5A2.5 2.5 0 0 0 22 14a2.5 2.5 0 0 0-4 2.2c0 .45.12.88.32 1.25"/><path d="M18.5 9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M3.45 16.5A2.5 2.5 0 0 1 2 14a2.5 2.5 0 0 1 4 2.2c0 .45-.12.88-.32 1.25"/><path d="M5.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="chat-body" class="chat-body"></div>
+        <div id="thinking-indicator-area"></div>
+        <div class="input-area">
+            <button id="attach-file-btn" class="attach-button" aria-label="Attach text file" title="Attach text file">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.49"></path></svg>
+            </button>
+            <input type="file" id="file-upload-input" accept=".txt,.md,.js,.py,.html,.css,.json,text/plain,text/*" style="display: none;">
+            <textarea id="message-input" class="input-field" placeholder="Type your message... (-color:text-) or (color)word" rows="1"></textarea>
+            <button id="send-button" class="send-button" aria-label="Send message" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-send-horizontal">
+                    <path d="m3 3 3 9-3 9 19-9Z"/><path d="M6 12h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="context-modal" class="modal">
+    <div class="modal-content">
+        <span id="modal-close-button" class="modal-close">&times;</span>
+        <h2 class="modal-title">Current API Context</h2>
+        <div id="context-modal-body"></div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
