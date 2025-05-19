@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>VellyAI - Advanced Chat</title>
+<link rel="stylesheet" href="style.css">
+<script src=https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div id="sidebar" class="sidebar glass-effect">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Menu</h2>
+            <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab active" data-tab="history">History</button>
+            <!-- Settings tab removed from sidebar structure -->
+        </div>
+        <div class="sidebar-content" id="history-tab">
+            <button id="new-chat-button" class="new-chat-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
+                New Chat
+            </button>
+            <ul class="history-list" id="history-list"></ul>
+        </div>
+        <!-- Settings tab content removed from sidebar structure -->
+    </div>
+
+    <div class="chat-container glass-effect">
+        <div class="chat-header">
+            <div class="header-content">
+                <button id="menu-button" class="header-button" aria-label="Open menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="header-icon" id="chat-header-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-bot">
+                        <path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <h1 id="chat-header-title" class="header-title">VellyAI</h1>
+            </div>
+            <div class="header-actions">
+                <button id="view-context-button" class="header-button" aria-label="View Context/Memory" title="View Context/Memory">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain-cog">
+                        <path d="M12 2a4.5 4.5 0 0 0-4.5 4.5v.43a1.5 1.5 0 0 1-1.17 1.41A6.5 6.5 0 0 0 9.5 16v2.5a2.5 2.5 0 0 0 5 0V16a6.5 6.5 0 0 0 3.17-2.66 1.5 1.5 0 0 1-1.17-1.41V6.5A4.5 4.5 0 0 0 12 2Z"/><path d="M20.55 16.5A2.5 2.5 0 0 0 22 14a2.5 2.5 0 0 0-4 2.2c0 .45.12.88.32 1.25"/><path d="M18.5 9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M3.45 16.5A2.5 2.5 0 0 1 2 14a2.5 2.5 0 0 1 4 2.2c0 .45-.12.88-.32 1.25"/><path d="M5.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/>
+                    </svg>
+                </button>
+                <button id="profiles-button" class="header-button" aria-label="Manage Profiles" title="Manage Profiles & Personas">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-round">
+                        <path d="M18 21a8 8 0 0 0-16 0"/> <path d="M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/> <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-10 0c-2 1.5-4 4.63-4 8"/> <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </button>
+                <button id="app-settings-button" class="header-button" aria-label="Application Settings" title="Application Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-2">
+                        <path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="chat-body" class="chat-body"></div>
+        <div id="typing-indicator-area"></div>
+        <div class="input-area">
+            <textarea id="message-input" class="input-field" placeholder="Type your message... (use -B, -P, -R for colors)" rows="1"></textarea>
+            <button id="send-button" class="send-button" aria-label="Send message" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-send-horizontal">
+                    <path d="m3 3 3 9-3 9 19-9Z"/><path d="M6 12h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="context-modal" class="modal">
+    <div class="modal-content">
+        <span id="modal-close-button" class="modal-close">×</span>
+        <h2 class="modal-title">Current API Context</h2>
+        <div id="context-modal-body"></div>
+    </div>
+</div>
+
+<!-- New App Settings Modal -->
+<div id="app-settings-modal" class="modal">
+    <div class="modal-content">
+        <span id="app-settings-modal-close-button" class="modal-close">×</span>
+        <h2 class="modal-title">Application Settings</h2>
+        <div class="settings-section">
+            <label for="app-settings-api-key-input" class="settings-label">Chutes.AI API Key</label>
+            <input type="password" id="app-settings-api-key-input" class="settings-input" placeholder="Enter your Chutes.AI API Key">
+            <small>Your API key is stored locally in your browser.</small>
+        </div>
+        <div class="settings-section">
+            <label for="app-settings-model-select" class="settings-label">AI Model</label>
+            <select id="app-settings-model-select" class="settings-select">
+                <option value="deepseek-ai/DeepSeek-V3-0324" selected>DeepSeek V3 0324</option>
+                <!-- Add other models here if needed -->
+            </select>
+        </div>
+        <button id="save-app-settings-button" class="settings-button">Save App Settings</button>
+        <div class="settings-section" style="margin-top: 1.5rem;">
+            <h3 style="color: var(--secondary-color); margin-bottom: 0.5rem;">Legal Disclaimer</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+                This chatbot runs entirely in your browser. No data is stored or sent to any server owned by this site.<br>
+                The site owner is not responsible for the content generated or how the chatbot is used.<br>
+                Use at your own risk.
+            </p>      
+        </div>
+    </div>
+</div>
+
+<!-- New Profiles & Personas Modal -->
+<div id="profiles-modal" class="modal">
+    <div class="modal-content large">
+        <span id="profiles-modal-close-button" class="modal-close">×</span>
+        <h2 class="modal-title">Profiles & Personas</h2>
+        
+        <div class="modal-tabs-container">
+            <button class="modal-tab active" data-tab="ai-characters-tab-content">AI Characters</button>
+            <button class="modal-tab" data-tab="user-personas-tab-content">User Personas</button>
+        </div>
+
+        <!-- AI Characters Tab Content -->
+        <div id="ai-characters-tab-content" class="modal-tab-panel active">
+            <div class="profile-management-area">
+                <div class="profile-selector-actions">
+                    <select id="ai-character-select" class="settings-select"></select>
+                    <div class="profile-buttons">
+                        <button id="create-new-ai-character-button" class="control-button">Create New</button>
+                        <button id="edit-selected-ai-character-button" class="control-button">Edit Selected</button>
+                        <button id="delete-selected-ai-character-button" class="control-button danger">Delete Selected</button>
+                    </div>
+                </div>
+
+                <div id="ai-character-form-container" class="profile-form-container" style="display: none;">
+                    <h3 id="ai-character-form-title">Create New AI Character</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ai-char-name" class="settings-label">Character Name:</label>
+                            <input type="text" id="ai-char-name" class="settings-input" placeholder="E.g., Velly, Glitch, Captain Future">
+                        </div>
+                        <div class="form-group">
+                            <label for="ai-char-image-url" class="settings-label">Image URL (for avatar):</label>
+                            <input type="url" id="ai-char-image-url" class="settings-input" placeholder="https://example.com/avatar.png">
+                        </div>
+                        <div class="form-group">
+                            <label for="ai-char-age" class="settings-label">Age:</label>
+                            <input type="text" id="ai-char-age" class="settings-input" placeholder="E.g., 25, ancient, timeless">
+                        </div>
+                        <div class="form-group">
+                            <label for="ai-char-sex" class="settings-label">Sex/Gender:</label>
+                            <input type="text" id="ai-char-sex" class="settings-input" placeholder="E.g., Female, Male, Bot, N/A">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="ai-char-description" class="settings-label">Visual Description:</label>
+                        <textarea id="ai-char-description" class="settings-textarea monaco-like" rows="3" placeholder="Describe how the character looks. E.g., 'A sleek, purple robot with glowing blue eyes.'"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="ai-char-personality" class="settings-label">Personality (Core Instructions & Behavior):</label>
+                        <textarea id="ai-char-personality" class="settings-textarea monaco-like" rows="8" placeholder="Define the AI's core instructions, personality traits, how it should respond, rules, and knowledge. If blank, a default persona will be used."></textarea>
+                        <small>This is the main prompt defining the AI's behavior. Name, age, sex, and visual description from above will be automatically prepended to this.</small>
+                    </div>
+                    <button id="save-ai-character-button" class="settings-button">Save AI Character</button>
+                    <button id="cancel-ai-character-button" class="settings-button secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Personas Tab Content (WITH NEW FIELDS) -->
+        <div id="user-personas-tab-content" class="modal-tab-panel" style="display:none;">
+             <div class="profile-management-area">
+                <div class="profile-selector-actions">
+                    <select id="user-persona-select" class="settings-select"></select>
+                     <div class="profile-buttons">
+                        <button id="create-new-user-persona-button" class="control-button">Create New</button>
+                        <button id="edit-selected-user-persona-button" class="control-button">Edit Selected</button>
+                        <button id="delete-selected-user-persona-button" class="control-button danger">Delete Selected</button>
+                    </div>
+                </div>
+
+                <div id="user-persona-form-container" class="profile-form-container" style="display: none;">
+                    <h3 id="user-persona-form-title">Create New User Persona</h3>
+                     <div class="form-group">
+                        <label for="user-persona-name" class="settings-label">Persona Name / Your Character's Name:</label>
+                        <input type="text" id="user-persona-name" class="settings-input" placeholder="E.g., Explorer Alex, Shadowblade">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="user-persona-visual-appearance" class="settings-label">Visual Appearance (What the AI initially 'sees'):</label>
+                        <textarea id="user-persona-visual-appearance" class="settings-textarea monaco-like" rows="3" placeholder="E.g., 'A tall figure in a dark, hooded cloak, eyes glowing faintly red.' or 'A young woman with bright pink hair and cybernetic goggles.'"></textarea>
+                        <small>Keep this concise. This is what the AI will know about your look from the start of a new chat.</small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="user-persona-initial-knowledge" class="settings-label">Initial Knowledge for AI (Rumors/Reputation - Optional):</label>
+                        <textarea id="user-persona-initial-knowledge" class="settings-textarea monaco-like" rows="3" placeholder="E.g., 'Rumored to be a skilled thief.' or 'Known as a kind healer in the village.'"></textarea>
+                        <small>Short details the AI might have heard about you (added to AI's system prompt at chat start). Leave blank if none.</small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="user-persona-full-details" class="settings-label">Full Persona Details (Your Private Notes / For Reference):</label>
+                        <textarea id="user-persona-full-details" class="settings-textarea monaco-like" rows="6" placeholder="Describe your character's full backstory, personality, powers, secrets, age, gender, etc. The AI will NOT see this directly by default. Use this for your reference or for specific scenarios where you might copy-paste parts into the chat."></textarea>
+                        <small>This section is primarily for your reference. The AI discovers most details through interaction.</small>
+                    </div>
+                    <button id="save-user-persona-button" class="settings-button">Save User Persona</button>
+                    <button id="cancel-user-persona-button" class="settings-button secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
